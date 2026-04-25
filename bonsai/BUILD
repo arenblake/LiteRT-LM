@@ -13,6 +13,7 @@ cc_binary(
         "src/main.cpp",
         "src/inference/ModelManager.cpp",
         "src/inference/InferenceSession.cpp",
+        "src/mcp/McpHttpClient.cpp",
     ],
     defines = ["LITERT_LM_FST_CONSTRAINTS_DISABLED=1"],
     deps = [
