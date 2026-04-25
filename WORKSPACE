@@ -7,9 +7,9 @@ LITERT_REF = "d865fd82cd7fe6752908b3a0836895461c305679"
 
 LITERT_SHA256 = "5c1568c2374aad0e334abd57c41e3974ec0877c0902eb470d694ef0018e01918"
 
-TENSORFLOW_REF = "49e7f1937d1509dd7fea41bff9ccc994baa97258"
+TENSORFLOW_REF = "5cdb51d9c84e3194235e49a0b8e72da2df75bf1e"
 
-TENSORFLOW_SHA256 = "977114079cda0d6aa9d05bc73ae2c2e3d36705fbb041e631a564e4d42e1e1dd9"
+TENSORFLOW_SHA256 = "8c1a4fe0a49e5dd0e94ff406b9be91ce8c865a298dab25a7b637f7af39bea323"
 
 # buildifier: disable=load-on-top
 
@@ -251,11 +251,9 @@ http_archive(
 )
 
 load("@rules_kotlin//kotlin:repositories.bzl", "kotlin_repositories")
-
 kotlin_repositories()  # if you want the default. Otherwise see custom kotlinc distribution below
 
 load("@rules_kotlin//kotlin:core.bzl", "kt_register_toolchains")
-
 kt_register_toolchains()  # to use the default toolchain, otherwise see toolchains below
 
 # Rust (for HuggingFace Tokenizers)
@@ -537,3 +535,17 @@ filegroup(
     url = "https://github.com/NixOS/patchelf/releases/download/0.18.0/patchelf-0.18.0-aarch64.tar.gz",
 )
 
+# Oat++ local repository
+new_local_repository(
+    name = "oatpp",
+    path = "/usr/local",
+    build_file_content = """
+cc_library(
+    name = "oatpp",
+    srcs = ["lib/oatpp-1.4.0/liboatpp.a"],
+    hdrs = glob(["include/oatpp-1.4.0/oatpp/**/*.hpp"]),
+    includes = ["include/oatpp-1.4.0"],
+    visibility = ["//visibility:public"],
+)
+""",
+)

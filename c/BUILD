@@ -58,6 +58,18 @@ ENGINE_COMMON_DEPS = [
     "//runtime/proto:token_cc_proto",
     "//runtime/util:logging",
 ]
+cc_binary(
+    name = "libbonsai_engine.so",
+    srcs = [
+        "engine.cc",
+        "engine.h",
+    ],
+    linkshared = True,
+    visibility = ["//visibility:public"],
+    deps = ENGINE_COMMON_DEPS + [
+        "//runtime/core:engine_impl_cpu_only",
+    ],
+)
 
 cc_library(
     name = "engine",
