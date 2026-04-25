@@ -544,7 +544,7 @@ cc_library(
     name = "oatpp",
     srcs = ["lib/oatpp-1.4.0/liboatpp.a"],
     hdrs = glob(["include/oatpp-1.4.0/oatpp/**/*.hpp"]),
-    includes = ["include/oatpp-1.4.0"],
+    includes = ["include/oatpp-1.4.0/oatpp"],
     visibility = ["//visibility:public"],
 )
 """,
