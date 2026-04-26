@@ -21,7 +21,7 @@ struct LiteRtLmGemmaModelConstraintProvider {
 
 extern "C" {
 
-void* LiteRtLmGemmaModelConstraintProvider_Create(void* config) {
+void* LiteRtLmGemmaModelConstraintProvider_Create(const void* config) {
     fprintf(stderr, "\n[LiteRT-LM WARN] Gemma Constraint Provider is"
                     " STUBBED/DISABLED.\n");
     fprintf(stderr, "[LiteRT-LM WARN] Any requests for grammar-constrained"
@@ -34,7 +34,7 @@ void LiteRtLmGemmaModelConstraintProvider_Destroy(void* provider) {
 }
 
 void* LiteRtLmGemmaModelConstraintProvider_CreateConstraintFromTools(
-    void* provider, void* tools) {
+    void* provider, const char* json_tools_str, const void* tokenizer) {
     return nullptr;
 }
 }  // extern "C"
