@@ -112,6 +112,14 @@ litert::lm::OptionalArgs CreateOptionalArgs(
         nlohmann::ordered_json::parse(extra_context, nullptr, false);
     if (!extra_context_json.is_null() && !extra_context_json.empty()) {
       litert_lm_optional_args.extra_context = extra_context_json;
+      if (extra_context_json.contains("has_pending_message")) {
+        litert_lm_optional_args.has_pending_message =
+            extra_context_json["has_pending_message"].get<bool>();
+      }
+      if (extra_context_json.contains("max_output_tokens")) {
+        litert_lm_optional_args.max_output_tokens =
+            extra_context_json["max_output_tokens"].get<int>();
+      }
     }
   }
   if (visual_token_budget.has_value()) {

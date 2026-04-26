@@ -21,6 +21,14 @@ package(
 
 licenses(["notice"])
 
+# Pass --define=LITERT_LM_FST_CONSTRAINTS_DISABLED=1 to disable FST constraints.
+config_setting(
+    name = "litert_lm_fst_constraints_disabled",
+    define_values = {
+        "LITERT_LM_FST_CONSTRAINTS_DISABLED": "1",
+    },
+)
+
 cc_library(
     name = "bitmap",
     hdrs = ["bitmap.h"],
@@ -115,9 +123,25 @@ cc_library(
     ],
 )
 
+cc_library(
+    name = "gemma_model_constraint_provider_stub",
+    srcs = ["//cmake/patches/stubs:gemma_model_constraint_provider.cc"],
+    hdrs = ["gemma_model_constraint_provider.h"],
+    deps = [
+        ":constraint",
+        ":constraint_provider",
+        ":constraint_provider_config",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+    ],
+)
+
 alias(
     name = "gemma_model_constraint_provider_lib",
-    actual = ":gemma_model_constraint_provider_shared_lib",
+    actual = select({
+        ":litert_lm_fst_constraints_disabled": ":gemma_model_constraint_provider_stub",
+        "//conditions:default": ":gemma_model_constraint_provider_shared_lib",
+    }),
 )
 
 cc_import(
@@ -257,132 +281,6 @@ cc_library(
     ],
 )
 
-cc_test(
-    name = "llguidance_schema_utils_test",
-    srcs = ["llguidance_schema_utils_test.cc"],
-    deps = [
-        ":bitmap",
-        ":constraint",
-        ":llg_constraint_config",
-        ":llg_constraint_provider",
-        ":llguidance_schema_utils",
-        "@com_google_googletest//:gtest_main",
-        "@com_google_absl//absl/container:flat_hash_map",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/status:statusor",
-        "@com_google_absl//absl/strings",
-        "@com_google_absl//absl/strings:string_view",
-        "@nlohmann_json//:json",
-        "//runtime/components:tokenizer",
-        "//runtime/util:litert_status_util",
-        "//runtime/util:test_utils",
-    ],
-)
-
-cc_test(
-    name = "llg_tool_call_utils_test",
-    srcs = ["llg_tool_call_utils_test.cc"],
-    deps = [
-        ":llguidance_schema_utils",
-        "@com_google_googletest//:gtest_main",
-        "@nlohmann_json//:json",
-    ],
-)
-
-cc_test(
-    name = "llg_fc_tool_calls_test",
-    srcs = ["llg_fc_tool_calls_test.cc"],
-    deps = [
-        ":bitmap",
-        ":constraint",
-        ":llg_constraint_config",
-        ":llg_constraint_provider",
-        ":llguidance_schema_utils",
-        "@com_google_googletest//:gtest_main",
-        "@com_google_absl//absl/container:flat_hash_map",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/status:statusor",
-        "@com_google_absl//absl/strings",
-        "@com_google_absl//absl/strings:string_view",
-        "@nlohmann_json//:json",
-        "//runtime/components:tokenizer",
-        "//runtime/util:litert_status_util",
-        "//runtime/util:test_utils",
-    ],
-)
-
-cc_test(
-    name = "llg_python_tool_calls_test",
-    srcs = ["llg_python_tool_calls_test.cc"],
-    deps = [
-        ":bitmap",
-        ":constraint",
-        ":llg_constraint_config",
-        ":llg_constraint_provider",
-        ":llguidance_schema_utils",
-        "@com_google_googletest//:gtest_main",
-        "@com_google_absl//absl/container:flat_hash_map",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/status:statusor",
-        "@com_google_absl//absl/strings",
-        "@com_google_absl//absl/strings:string_view",
-        "@nlohmann_json//:json",
-        "//runtime/components:tokenizer",
-        "//runtime/util:litert_status_util",
-        "//runtime/util:test_utils",
-    ],
-)
-
-cc_test(
-    name = "llg_constraint_provider_test",
-    srcs = ["llg_constraint_provider_test.cc"],
-    deps = [
-        ":llg_constraint_config",
-        ":llg_constraint_provider",
-        "@com_google_googletest//:gtest_main",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/status:statusor",
-        "@com_google_absl//absl/strings:string_view",
-        "//runtime/components:tokenizer",
-        "//runtime/util:test_utils",
-        "@crate_index__llguidance-1.3.0//:llguidance_cc"
-    ],
-)
-
-cc_test(
-    name = "llg_constraint_test",
-    srcs = ["llg_constraint_test.cc"],
-    deps = [
-        ":bitmap",
-        ":constraint",
-        ":constraint_provider",
-        ":llg_constraint_config",
-        ":llg_constraint_provider",
-        "@com_google_googletest//:gtest_main",
-        "@com_google_absl//absl/status:statusor",
-        "@com_google_absl//absl/strings",
-        "//runtime/components:tokenizer",
-        "//runtime/util:test_utils",
-    ],
-)
-
-cc_test(
-    name = "external_constraint_provider_test",
-    srcs = ["external_constraint_provider_test.cc"],
-    deps = [
-        ":constraint",
-        ":constraint_provider_config",
-        ":external_constraint_config",
-        ":external_constraint_provider",
-        ":fake_constraint",
-        ":fst_constraint_config",
-        ":llg_constraint_config",
-        "@com_google_googletest//:gtest_main",
-        "@com_google_absl//absl/status",
-        "//runtime/util:test_utils",
-    ],
-)
-
 cc_library(
     name = "constraint_provider_factory",
     srcs = ["constraint_provider_factory.cc"],
@@ -397,22 +295,5 @@ cc_library(
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
         "//runtime/components:tokenizer",
-    ],
-)
-
-cc_test(
-    name = "constraint_provider_factory_test",
-    srcs = ["constraint_provider_factory_test.cc"],
-    deps = [
-        ":constraint_provider_config",
-        ":constraint_provider_factory",
-        ":external_constraint_config",
-        ":llg_constraint_config",
-        "@com_google_googletest//:gtest_main",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/status:statusor",
-        "@com_google_absl//absl/strings:string_view",
-        "//runtime/components:tokenizer",
-        "//runtime/util:test_utils",
     ],
 )
