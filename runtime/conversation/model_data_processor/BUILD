@@ -312,12 +312,8 @@ cc_library(
         "//runtime/util:memory_mapped_file",
         "@com_googlesource_code_re2//:re2",
         "@sentencepiece//:sentencepiece_model_cc_proto",
-    ] + select({
-        ":litert_lm_fst_constraints_disabled": [],
-        "//conditions:default": [
-            "//runtime/components/constrained_decoding:gemma_model_constraint_provider_lib",
-        ],
-    }),
+        "//runtime/components/constrained_decoding:gemma_model_constraint_provider_lib",
+    ],
 )
 
 cc_test(
@@ -377,12 +373,8 @@ cc_library(
         "//runtime/engine:io_types",
         "//runtime/util:litert_status_util",
         "@sentencepiece//:sentencepiece_model_cc_proto",
-    ] + select({
-        ":litert_lm_fst_constraints_disabled": [],
-        "//conditions:default": [
-            "//runtime/components/constrained_decoding:gemma_model_constraint_provider_lib",
-        ],
-    }),
+        "//runtime/components/constrained_decoding:gemma_model_constraint_provider_lib",
+    ],
 )
 
 cc_test(
@@ -450,10 +442,6 @@ cc_library(
         "//runtime/util:memory_mapped_file",
         "@com_googlesource_code_re2//:re2",
         "@sentencepiece//:sentencepiece_model_cc_proto",
-    ] + select({
-        ":litert_lm_fst_constraints_disabled": [],
-        "//conditions:default": [
-            "//runtime/components/constrained_decoding:gemma_model_constraint_provider_lib",
-        ],
-    }),
+        "//runtime/components/constrained_decoding:gemma_model_constraint_provider_lib",
+    ],
 )
