@@ -546,8 +546,14 @@ cc_library(
         "@platforms//os:android": ["oatpp-android/lib/oatpp-1.4.0/liboatpp.a"],
         "//conditions:default": ["lib/oatpp-1.4.0/liboatpp.a"],
     }),
-    hdrs = glob(["include/oatpp-1.4.0/oatpp/**/*.hpp"]),
-    includes = ["include/oatpp-1.4.0/oatpp"],
+    hdrs = select({
+        "@platforms//os:android": glob(["oatpp-android/include/oatpp-1.4.0/oatpp/**/*.hpp"]),
+        "//conditions:default": glob(["include/oatpp-1.4.0/oatpp/**/*.hpp"]),
+    }),
+    includes = select({
+        "@platforms//os:android": ["oatpp-android/include/oatpp-1.4.0/oatpp"],
+        "//conditions:default": ["include/oatpp-1.4.0/oatpp"],
+    }),
     visibility = ["//visibility:public"],
 )
 """,
