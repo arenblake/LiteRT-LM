@@ -25,23 +25,21 @@ cc_binary(
         "//runtime/components/constrained_decoding:gemma_model_constraint_provider_stub",
         "@oatpp//:oatpp",
         "@nlohmann_json//:json",
-        "//c:engine_cpu",
+        "//c:engine",
     ],
     # Link all dependencies statically
     linkstatic = True,
-    # Force absolute static linkage
     linkopts = select({
         "@platforms//os:android": [
-            "-s",
             "-latomic",
             "-ldl",
         ],
         "//conditions:default": [
-            "-s", "-static",
             "-lrt",
             "-latomic",
             "-lpthread",
             "-ldl",
+            "-Wl,--export-dynamic-symbol=LiteRt*",
         ],
     }),
 )
@@ -64,7 +62,7 @@ cc_binary(
         "//runtime/components/constrained_decoding:gemma_model_constraint_provider_stub",
         "@oatpp//:oatpp",
         "@nlohmann_json//:json",
-        "//c:engine_cpu",
+        "//c:engine",
     ],
     linkshared = True,
     linkopts = select({
